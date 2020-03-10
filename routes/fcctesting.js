@@ -33,7 +33,7 @@ var runner = require('../test-runner');
 
 module.exports = function (app) {
 
-  app.route('/_api/server.js')
+  app.route('/_api/server.js') 
     .get(function(req, res, next) {
       console.log('requested');
       fs.readFile(__dirname + '/server.js', function(err, data) {
@@ -96,7 +96,9 @@ function testFilter(tests, type, n) {
     default:
       out = tests;
   }
-  if(n !== undefined) {
+  //console.log(n);
+  if(n !== undefined) { 
+    console.log(n + " should not be undefined");
     return out[n] || out;
   }
   return out;
