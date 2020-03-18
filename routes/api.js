@@ -19,11 +19,11 @@ module.exports = function(app, db) {
 
     .get(async function(req, res) {
       var ip = req.headers["x-forwarded-for"];
-      ip = ip ? ip.split(",")[0] : '0.0.0.0';
+      ip = ip ? ip.split(",")[0] : "0.0.0.0";
       var stockQuery = stockHandler.getStockQuery(req.query);
-      //console.log("request received...");
-      //console.log(`${ip} requesting: ${JSON.stringify(stockQuery)}`)
-    
+      console.log("request received...");
+      console.log(`${ip} requesting: ${JSON.stringify(stockQuery)}`);
+
       var wasLiked =
         (await db
           .collection("likes")

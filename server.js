@@ -13,7 +13,7 @@ var runner = require("./test-runner");
 
 var app = express();
 
-app.use(
+/*app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
@@ -22,7 +22,7 @@ app.use(
       }
     }
   })
-);
+);*/
 
 app.use("/public", express.static(process.cwd() + "/public"));
 
@@ -39,7 +39,18 @@ mongo.connect(process.env.DB, { useUnifiedTopology: true }, (err, client) => {
     var db = client.db("stocks");
     //Index page (static HTML)
     app.route("/").get(function(req, res) {
-      res.sendFile(process.cwd() + "/views/index.html");
+     
+      var ip = req.headers["x-forwarded-for"];
+      ip = ip ? ip.split(",")[0] : "0.0.0.0";
+      db.collection("ips").findOneAndUpdate(
+        { ip: ip },
+        { $setOnInsert: { ip: ip }, $inc: { visits: 1 } },
+        { upsert: true, returnOriginal: false },
+        (err, doc) => {
+          if (err) console.log("IP log error" + err);
+          res.sendFile(process.cwd() + "/views/index.html");
+        }
+      );
     });
 
     //For FCC testing purposes

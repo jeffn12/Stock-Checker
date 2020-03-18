@@ -75,14 +75,23 @@ suite("Functional Tests", function() {
         .set("x-forwarded-for", "1.1.1.1")
         .query({ stock: "goog", like: true })
         .end((err, res) => {
-          assert.equal(res.status, 200);
-          assert.isObject(res.body.stockData);
-          assert.property(res.body.stockData, "stock");
-          assert.property(res.body.stockData, "price");
-          assert.property(res.body.stockData, "likes");
-          assert.equal(res.body.stockData.stock, "GOOG");
+          var originalLikes = res.body.stockData.likes;
+          chai
+            .request(server)
+            .get("/api/stock-prices")
+            .set("x-forwarded-for", "1.1.1.1")
+            .query({ stock: "goog", like: true })
+            .end((err, res) => {
+              assert.equal(res.status, 200);
+              assert.isObject(res.body.stockData);
+              assert.property(res.body.stockData, "stock");
+              assert.property(res.body.stockData, "price");
+              assert.property(res.body.stockData, "likes");
+              assert.equal(res.body.stockData.stock, "GOOG");
+              assert.equal(res.body.stockData.likes, originalLikes);
 
-          done();
+              done();
+            });
         });
     });
 
